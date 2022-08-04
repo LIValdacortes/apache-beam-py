@@ -15,7 +15,7 @@ import apache_beam as beam
 import argparse
 from ast import parse
 
-from apache_beam.options_pipeline_options import PipelineOptios
+from apache_beam.options.pipeline_options import PipelineOptions
 
 def main():
     #leer argumentos de entrada cli
@@ -30,14 +30,15 @@ def run_pipeline(custom_args,beam_args):
     entrada = custom_args.entrada
     salida = custom_args.salida
 
-    opts = PipelineOptios(beam_args)
+    opts = PipelineOptions(beam_args)
 
-    with beam.Pipeline(opts) as p:
+    with beam.Pipeline(options=opts) as p:
         lineas: PCollection[str] = p | beam.io.ReadFromText(entrada)
         palabras = lineas | beam.FlatMap(lambda  l : l.split())
         contadas: PCollection[Tuple[str,int]] = palabras | beam.combiners.Count.PerElement()
-        palabras_top = contadas | beam.combiners.Top.Of(5, keys = lambda kv: kv[1])
-
+        palabras_top_lista = contadas | beam.combiners.Top.Of(5, key=lambda kv: kv[1])
+        palabras_top = palabras_top_lista | beam.FlatMap(lambda x:x)
+        formateado = palabras_top | beam.Map(lambda kv: "%s,%d" % (kv[0],kv[1]))
         palabras_top | beam.Map(print)
 
 
