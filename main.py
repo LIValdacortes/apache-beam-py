@@ -36,7 +36,7 @@ def create_dataframe(readable_file):
 
 def make_request(data_payload):
     headers = {
-        'apikey': 'iKG1eWAZFkQ3AOgw4bWp5WXggSBodNDYmxLWXTkY1P8AOYhn',
+        'apikey': '',
         'Content-Type': 'application/json'
     }
     url = "https://qatapigee.liverpool.com.mx/cdp-pos/v2/clientes/atg"
